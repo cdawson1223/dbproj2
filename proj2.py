@@ -1,11 +1,22 @@
 import numpy as np 
 from googleapiclient.discovery import build
+from bs4 import BeautifulSoup
 #from sklearn.feature_extraction.text import TfidfVectorizer 
 #import heapq
 import sys
+import spacy
 
 
-
+def extract_tuples(input_text):
+    #using spacy -> convert text to possible tuples
+    # can identify numeric entities->including companies, locations, organizations and products
+    
+    #first, turn text into sentences -> # Apply spacy model to raw text (to split to sentences, tokenize, extract entities etc.)
+    nlp = spacy.load("en_core_web_lg")  
+    sentences = nlp(input_text).sents
+    #now, I think depending on if spanbert or dictionary, we build them 
+    
+    pass
 
 
 def scrape_web(query, key, id):
@@ -48,21 +59,28 @@ def main():
 
     #keeps track of urls already looked at 
     explored_urls = set()
-    #tuples to be generated starts empty
-    X_extracted_tuples = set()
+    #tuples to be generated starts empty -> use a dictionary to hold onto highest value 
+    X_extracted_tuples = {}
 
     while True:
-        links = scrape_web(inp,google_api, google_engine)
+        links = scrape_web(q,google_api, google_engine)
         #just get links that we have not looked at yet
         #desired_links = []
         for link in links:
             if link not in explored_urls:
                 explored_urls.add(link)
                 #now extract webpage, as long as no timeoute 
-
+                with open(link) as fp:
+                    soup = BeautifulSoup(fp, 'html.parser')
                 #use beautiful soup to get text (only first 10,000 chars)
+                text = soup.get_text()[0:10000]
 
-                #
+                #split the text into sentences and extract named entities -> use spaCy
+                new_tuples = extract_tuples(text)
+
+
+
+
 
 
 
