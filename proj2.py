@@ -5,9 +5,10 @@ from bs4 import BeautifulSoup
 #import heapq
 import sys
 import spacy
+import create_entity_pairs
 
 
-def extract_tuples(input_text):
+def extract_tuples(input_text,existing_entities):
     #using spacy -> convert text to possible tuples
     # can identify numeric entities->including companies, locations, organizations and products
     
@@ -15,8 +16,13 @@ def extract_tuples(input_text):
     nlp = spacy.load("en_core_web_lg")  
     sentences = nlp(input_text).sents
     #now, I think depending on if spanbert or dictionary, we build them 
-    
-    pass
+    new_tuples = set()
+    for sentence in sentences: 
+        sentence_tuples = create_entity_pairs(sentence, existing_entities, window_size=40)
+        for tup in sentence_tuples:
+            if tup not in new_tuples:
+                new_tuples.add(tup)  
+    return new_tuples
 
 
 def scrape_web(query, key, id):
@@ -77,6 +83,10 @@ def main():
 
                 #split the text into sentences and extract named entities -> use spaCy
                 new_tuples = extract_tuples(text)
+                
+                #if spanbert bert do: 
+
+                #if gemini do: 
 
 
 
