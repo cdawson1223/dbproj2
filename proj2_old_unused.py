@@ -7,11 +7,27 @@ import sys
 import spacy
 import create_entity_pairs
 
+spacy2bert = { 
+        "ORG": "ORGANIZATION",
+        "PERSON": "PERSON",
+        "GPE": "LOCATION", 
+        "LOC": "LOCATION",
+        "DATE": "DATE"
+        }
+
+bert2spacy = {
+        "ORGANIZATION": "ORG",
+        "PERSON": "PERSON",
+        "LOCATION": "LOC",
+        "CITY": "GPE",
+        "COUNTRY": "GPE",
+        "STATE_OR_PROVINCE": "GPE",
+        "DATE": "DATE"
+        }
 
 def extract_tuples(input_text,existing_entities):
     #using spacy -> convert text to possible tuples
     # can identify numeric entities->including companies, locations, organizations and products
-    
     #first, turn text into sentences -> # Apply spacy model to raw text (to split to sentences, tokenize, extract entities etc.)
     nlp = spacy.load("en_core_web_lg")  
     sentences = nlp(input_text).sents
@@ -22,7 +38,7 @@ def extract_tuples(input_text,existing_entities):
         for tup in sentence_tuples:
             if tup not in new_tuples:
                 new_tuples.add(tup)  
-    return new_tuples
+    return list(new_tuples)
 
 
 def scrape_web(query, key, id):
@@ -82,11 +98,18 @@ def main():
                 text = soup.get_text()[0:10000]
 
                 #split the text into sentences and extract named entities -> use spaCy
-                new_tuples = extract_tuples(text)
+                if gem_span == 'spanbert':
+                    new_tuples = spanbert_extract_tuples(text,)
                 
                 #if spanbert bert do: 
 
                 #if gemini do: 
+                elif gem_span == 'gemini':
+                    print("gemini")
+                    #call gemini function 
+                else:
+                    print("wrong type input")
+
 
 
 
